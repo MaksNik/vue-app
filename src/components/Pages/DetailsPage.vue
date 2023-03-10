@@ -10,15 +10,15 @@
       <div class="movie-info">
         <h1>
           {{ movie.name }}
-          <span class="movie-rating">{{ movie.rating }}</span>
+          <div class="movie-rating">{{ movie.rating }}</div>
         </h1>
         <p class="movie-promo">{{ movie.promo }}</p>
-        <div class="highlighted">
+        <div class="additional">
           <p>
-            <span class="number-highlighted">{{ movie.date.getFullYear() }}</span>&nbsp;year
+            <span class="highlighted">{{ year }}</span>year
           </p>
           <p>
-            <span class="number-highlighted">{{ movie.duration }}</span>&nbsp;min
+            <span class="highlighted">{{ duration }}</span>min
           </p>
         </div>
         <p class="description">{{ movie.description }}</p>
@@ -29,8 +29,12 @@
 
 <script setup lang="ts">
 import SharedButton from '@/components/shared/SharedButton.vue';
+import { computed } from 'vue';
 
-defineProps(['movie']);
+const props = defineProps(['movie']);
+
+const year = computed(() => props.movie.date.getFullYear());
+const duration = computed(() => props.movie.duration);
 </script>
 
 <style scoped lang="scss">
@@ -53,7 +57,53 @@ defineProps(['movie']);
       }
 
       .movie-info {
+        display: flex;
+        flex-direction: column;
         flex: 0 1 auto;
+
+        h1 {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+
+          font-size: 56px;
+          font-weight: normal;
+
+          margin: 0;
+
+          .movie-rating {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 44px;
+            height: 44px;
+
+            padding: 5px;
+            margin-left: 20px;
+
+            border: 1px solid grey;
+            border-radius: 50%;
+
+            font-size: 32px;
+            color: #A1E66F;
+          }
+        }
+
+        .additional {
+          display: flex;
+          align-items: flex-start;
+
+          p {
+            margin: 0 40px 0 0;
+
+            .highlighted {
+              font-size: 26px;
+              color: #F65261;
+              margin-right: 5px;
+            }
+          }
+        }
       }
     }
   }

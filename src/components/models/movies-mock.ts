@@ -1,6 +1,7 @@
 import { IMovie } from '@/components/models/models';
 
 const mockDescription = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum';
+const promo = 'Greatest movie you ever seen!';
 
 const allMovies: IMovie[] = [
   {
@@ -11,6 +12,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 4.1,
     duration: 130,
+    promo,
   },
   {
     name: 'Indiana Jones',
@@ -20,6 +22,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 3,
     duration: 130,
+    promo,
   },
   {
     name: 'Interstellar',
@@ -29,6 +32,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 4.9,
     duration: 130,
+    promo,
   },
   {
     name: 'Inception',
@@ -38,6 +42,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 4.8,
     duration: 130,
+    promo,
   },
   {
     name: 'Bad Santa',
@@ -47,6 +52,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 4.4,
     duration: 130,
+    promo,
   },
   {
     name: 'Black Hawk Down',
@@ -56,6 +62,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 4.6,
     duration: 130,
+    promo,
   },
   {
     name: 'Transformers',
@@ -65,6 +72,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 3.8,
     duration: 130,
+    promo,
   },
   {
     name: 'The Shawshank redemption',
@@ -74,6 +82,7 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 5,
     duration: 130,
+    promo,
   },
   {
     name: 'The Boondock Saints',
@@ -83,6 +92,37 @@ const allMovies: IMovie[] = [
     description: mockDescription,
     rating: 4.2,
     duration: 130,
+    promo,
+  },
+  {
+    name: 'Avatar',
+    genre: 'Action, Fantasy',
+    date: new Date('2009-12-10'),
+    posterUrl: 'https://avatars.mds.yandex.net/get-kinopoisk-image/4774061/a615ba02-1152-4ae2-bac1-38ab4c588f2b/1920x',
+    description: mockDescription,
+    rating: 4.9,
+    duration: 162,
+    promo,
+  },
+  {
+    name: 'Avatar 2: The Way of Water',
+    genre: 'Action, Fantasy',
+    date: new Date('2022-06-12'),
+    posterUrl: 'https://avatars.mds.yandex.net/get-kinopoisk-image/4483445/1494248c-2e10-4e3b-92b4-ce7ddad35d36/1920x',
+    description: mockDescription,
+    rating: 4.8,
+    duration: 192,
+    promo,
+  },
+  {
+    name: 'Top Gun: Maverick',
+    genre: 'Action',
+    date: new Date('2022-05-18'),
+    posterUrl: 'https://avatars.mds.yandex.net/get-kinopoisk-image/1898899/5e79cc41-eb0f-487c-951d-f983fdc9a9d3/1920x',
+    description: mockDescription,
+    rating: 4.7,
+    duration: 130,
+    promo,
   },
 ];
 export default allMovies;

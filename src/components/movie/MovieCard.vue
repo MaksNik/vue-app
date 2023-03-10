@@ -1,7 +1,6 @@
 <template>
   <article class="movie-card">
-    <main :style="{'background-image': `url(${movie.posterUrl})`, 'background-size': 'cover'}"
-          class="poster">
+    <main v-show-if-in-viewport="showPoster" class="poster">
     </main>
     <footer>
       <div class="row">
@@ -16,7 +15,20 @@
 </template>
 
 <script lang="ts" setup>
-defineProps(['movie']);
+import { vShowIfInViewport } from '@/components/directives';
+
+const props = defineProps(['movie']);
+
+function showPoster(entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
+  entries.forEach((entry) => {
+    const { target, isIntersecting } = entry;
+
+    if (isIntersecting) {
+      (target as HTMLElement).style.backgroundImage = `url(${props.movie.posterUrl})`;
+      (target as HTMLElement).style.backgroundSize = 'cover';
+    }
+  });
+}
 </script>
 
 <style lang="scss" scoped>

@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import SharedButton from '@/components/shared/SharedButton.vue';
-import { defineEmits, ref } from 'vue';
+import { ref } from 'vue';
 
 const inputValue = ref('');
 </script>

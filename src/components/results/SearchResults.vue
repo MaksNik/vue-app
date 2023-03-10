@@ -4,13 +4,13 @@
       <div class="movie-counter">
         <span>{{results.length}} Movie found</span>
       </div>
-      <SortBySwitcher @set-sort-mode="onSetSortMode"></SortBySwitcher>
+      <SortBySwitcher @set-sort-mode="sortMode = $event"></SortBySwitcher>
     </div>
   </header>
   <main class="results-container">
     <div class="wrapper">
       <MovieList
-        :movie-list="sortResultsByMode(results)"
+        :movie-list="sortedResults"
         @set-active-movie="$emit('setActiveMovie', $event)"
       ></MovieList>
     </div>
@@ -20,26 +20,19 @@
 <script setup lang="ts">
 import SortBySwitcher from '@/components/results/SortMode.vue';
 import MovieList from '@/components/movie/MovieList.vue';
-import { ref, Ref, watch } from 'vue';
+import {
+  computed, ComputedRef, ref, Ref,
+} from 'vue';
 import { IMovie, SortMode } from '@/components/models/models';
 
 const sortMode: Ref<SortMode> = ref(SortMode.ReleaseDate);
 const props = defineProps(['results']);
+const sortedResults: ComputedRef<IMovie[]> = computed(() => {
+  const compareFn = sortMode.value === SortMode.Rating
+    ? ((a: { rating: number; }, b: { rating: number; }) => b.rating - a.rating)
+    : ((a: { date: number; }, b: { date: number; }) => a.date - b.date);
 
-function sortResultsByMode(searchResults: IMovie[]): IMovie[] {
-  if (sortMode.value === SortMode.Rating) {
-    return [...searchResults].sort((a, b) => b.rating - a.rating);
-  }
-  return [...searchResults].sort((a: any, b: any) => a.date - b.date);
-}
-
-function onSetSortMode(mode: SortMode): void {
-  sortMode.value = mode;
-  sortResultsByMode(props.results);
-}
-
-watch(() => props.results, (oldValue, newValue) => {
-  sortResultsByMode(newValue);
+  return [...props.results].sort(compareFn);
 });
 </script>
 
@@ -69,5 +62,6 @@ watch(() => props.results, (oldValue, newValue) => {
   .results-container {
     background-color: #232323;
     color: white;
+    height: 100%;
   }
 </style>
