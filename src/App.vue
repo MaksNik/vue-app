@@ -2,25 +2,14 @@
   <div class="movies-app" ref="appRef">
     <header>
       <CompanyLogo />
-      <HomePage
-        v-if="!showDetailsPage"
-        @set-active-movie="setActiveMovie"
-        @search-finished="setSearchResults"
-      />
+      <HomePage v-if="!showDetailsPage" />
       <DetailsPage
         v-if="showDetailsPage"
-        :movie="activeMovie"
-        @go-home-page="() => {
-          showDetailsPage = false;
-          activeMovie.value = {};
-        }"
+        @go-home-page="unselectMovie"
       />
     </header>
     <main>
-      <SearchResults
-        :results="searchResults"
-        @set-active-movie="setActiveMovie"
-      />
+      <SearchResults />
     </main>
     <footer>
       <CompanyLogo />
@@ -29,28 +18,32 @@
 </template>
 
 <script setup lang="ts">
-import HomePage from '@/components/Pages/HomePage.vue';
-import DetailsPage from '@/components/Pages/DetailsPage.vue';
+import HomePage from '@/components/pages/HomePage.vue';
+import DetailsPage from '@/components/pages/DetailsPage.vue';
 import SearchResults from '@/components/results/SearchResults.vue';
 import CompanyLogo from '@/components/shared/CompanyLogo.vue';
-import { ref, Ref } from 'vue';
-import { IMovie } from '@/components/models/models';
-import allMovies from '@/components/models/movies-mock';
+import { computed, ref, Ref } from 'vue';
+import { IMovie } from '@/models/models';
+import allMovies from '@/models/movies';
+import { useStore } from 'vuex';
+import actionTypes from '@/store/action-types';
 
+const { getters, dispatch } = useStore();
 const appRef = ref(null);
-const searchResults: Ref<IMovie[]> = ref(allMovies);
-const activeMovie: Ref<IMovie> = ref({} as IMovie);
-const showDetailsPage: Ref<boolean> = ref(false);
+const selectedMovie: Ref<IMovie> = computed(() => getters.getSelectedMovie);
+const showDetailsPage: Ref<boolean> = computed(() => {
+  console.log(getters.getSelectedMovie);
+  if (getters.getSelectedMovie) {
+    appRef?.value.scrollIntoView({ behavior: 'smooth' });
+  }
 
-function setSearchResults(results: IMovie[]): void {
-  searchResults.value = results;
+  return !!getters.getSelectedMovie;
+});
+
+function unselectMovie(): void {
+  dispatch(actionTypes.unselectMovie);
 }
 
-function setActiveMovie(movie: IMovie): void {
-  activeMovie.value = movie;
-  showDetailsPage.value = true;
-  appRef.value.scrollIntoView({ behavior: 'smooth' });
-}
 </script>
 
 <style lang="scss">
