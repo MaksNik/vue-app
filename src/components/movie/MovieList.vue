@@ -1,15 +1,19 @@
 <template>
   <ul class="movie-list">
-    <li v-for="movie in movieList" :key="movie.name" class="movie-item">
-      <MovieCard @click="$emit('setActiveMovie', movie)" :movie="movie"></MovieCard>
+    <li v-for="movie in movieList" :key="movie.title" class="movie-item">
+      <MovieCard @click="dispatch(actionTypes.selectMovie, movie.id)" :movie="movie"></MovieCard>
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
 import MovieCard from '@/components/movie/MovieCard.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+import actionTypes from '@/store/action-types';
 
-defineProps(['movieList']);
+const { getters, dispatch } = useStore();
+const movieList = computed(() => getters.getMoviesList);
 </script>
 
 <style scoped lang="scss">
