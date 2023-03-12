@@ -4,11 +4,11 @@
     </main>
     <footer>
       <div class="row">
-        <p class="movie-name">{{movie.name}}</p>
-        <p class="movie-year">{{movie.date.getFullYear()}}</p>
+        <p class="movie-name">{{movie.title}}</p>
+        <p class="movie-year">{{year}}</p>
       </div>
       <div class="row">
-        <p class="movie-genre">{{movie.genre}}</p>
+        <p class="movie-genre">{{genres}}</p>
       </div>
     </footer>
   </article>
@@ -16,15 +16,18 @@
 
 <script lang="ts" setup>
 import { vShowIfInViewport } from '@/components/directives';
+import { computed } from 'vue';
 
 const props = defineProps(['movie']);
+const year = computed(() => new Date(props.movie.releaseDate).getFullYear());
+const genres = computed(() => props.movie.genres.join(', '));
 
-function showPoster(entries: IntersectionObserverEntry[], observer: IntersectionObserver): void {
+function showPoster(entries: IntersectionObserverEntry[]): void {
   entries.forEach((entry) => {
     const { target, isIntersecting } = entry;
 
     if (isIntersecting) {
-      (target as HTMLElement).style.backgroundImage = `url(${props.movie.posterUrl})`;
+      (target as HTMLElement).style.backgroundImage = `url(${props.movie.posterPath})`;
       (target as HTMLElement).style.backgroundSize = 'cover';
     }
   });

@@ -4,11 +4,11 @@
       <input type="text"
              placeholder="Type movie title or genre..."
              v-model="inputValue"
-             @keyup.enter="$emit('setSearchValue', inputValue)"
+             @keyup.enter="search"
       />
     </label>
     <SharedButton
-      @click="$emit('setSearchValue', inputValue)"
+      @click="search"
       label="Search"
       :is-active="true"
       :is-large="true"
@@ -18,9 +18,16 @@
 
 <script setup lang="ts">
 import SharedButton from '@/components/shared/SharedButton.vue';
+import { useStore } from 'vuex';
 import { ref } from 'vue';
+import actionTypes from '@/store/action-types';
 
 const inputValue = ref('');
+const { dispatch } = useStore();
+
+function search() {
+  dispatch(actionTypes.searchMovies, inputValue.value);
+}
 </script>
 
 <style scoped lang="scss">

@@ -4,15 +4,15 @@
     <article class="movie-details">
       <div class="movie-poster"
            :style="{
-          'background-image': `url(${movie.posterUrl})`,
+          'background-image': `url(${selectedMovie.posterPath})`,
           'background-size': 'cover'
     }"></div>
       <div class="movie-info">
         <h1>
-          {{ movie.name }}
-          <div class="movie-rating">{{ movie.rating }}</div>
+          {{ selectedMovie.title }}
+          <div class="movie-rating">{{ selectedMovie.voteAverage }}</div>
         </h1>
-        <p class="movie-promo">{{ movie.promo }}</p>
+        <p class="movie-promo">{{ selectedMovie.tagline }}</p>
         <div class="additional">
           <p>
             <span class="highlighted">{{ year }}</span>year
@@ -21,7 +21,7 @@
             <span class="highlighted">{{ duration }}</span>min
           </p>
         </div>
-        <p class="description">{{ movie.description }}</p>
+        <p class="description">{{ selectedMovie.overview }}</p>
       </div>
     </article>
   </div>
@@ -30,11 +30,12 @@
 <script setup lang="ts">
 import SharedButton from '@/components/shared/SharedButton.vue';
 import { computed } from 'vue';
+import { useStore } from 'vuex';
 
-const props = defineProps(['movie']);
-
-const year = computed(() => props.movie.date.getFullYear());
-const duration = computed(() => props.movie.duration);
+const { getters } = useStore();
+const selectedMovie = computed(() => getters.getSelectedMovie);
+const year = computed(() => new Date(selectedMovie.value.releaseDate).getFullYear());
+const duration = computed(() => selectedMovie.value.duration);
 </script>
 
 <style scoped lang="scss">
@@ -50,7 +51,8 @@ const duration = computed(() => props.movie.duration);
       display: flex;
 
       .movie-poster {
-        width: 324px;
+        max-width: 324px;
+        width: 100%;
         height: 455px;
         margin: 0 40px 40px 0;
         flex: 1 0 auto;

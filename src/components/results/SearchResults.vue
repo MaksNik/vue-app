@@ -2,17 +2,14 @@
   <header class="results-header">
     <div class="wrapper">
       <div class="movie-counter">
-        <span>{{results.length}} Movie found</span>
+        <span>{{moviesList.length}} Movie found</span>
       </div>
-      <SortBySwitcher @set-sort-mode="sortMode = $event"></SortBySwitcher>
+      <SortBySwitcher/>
     </div>
   </header>
   <main class="results-container">
     <div class="wrapper">
-      <MovieList
-        :movie-list="sortedResults"
-        @set-active-movie="$emit('setActiveMovie', $event)"
-      ></MovieList>
+      <MovieList/>
     </div>
   </main>
 </template>
@@ -20,30 +17,23 @@
 <script setup lang="ts">
 import SortBySwitcher from '@/components/results/SortMode.vue';
 import MovieList from '@/components/movie/MovieList.vue';
-import {
-  computed, ComputedRef, ref, Ref,
-} from 'vue';
-import { IMovie, SortMode } from '@/components/models/models';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
-const sortMode: Ref<SortMode> = ref(SortMode.ReleaseDate);
-const props = defineProps(['results']);
-const sortedResults: ComputedRef<IMovie[]> = computed(() => {
-  const compareFn = sortMode.value === SortMode.Rating
-    ? ((a: { rating: number; }, b: { rating: number; }) => b.rating - a.rating)
-    : ((a: { date: number; }, b: { date: number; }) => a.date - b.date);
+const { getters } = useStore();
+const moviesList = computed(() => getters.getMoviesList);
 
-  return [...props.results].sort(compareFn);
-});
 </script>
 
 <style scoped lang="scss">
   .wrapper {
     margin: 0 auto;
-    width: 1092px;
+    width: 1094px;
     display: flex;
   }
 
   .results-header {
+    display: flex;
     padding: 10px 0;
     background-color: #888888;
 
