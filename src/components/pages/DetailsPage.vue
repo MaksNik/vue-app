@@ -4,24 +4,24 @@
     <article class="movie-details">
       <div class="movie-poster"
            :style="{
-          'background-image': `url(${selectedMovie.posterPath})`,
+          'background-image': `url(${selectedMovie.posterurl})`,
           'background-size': 'cover'
     }"></div>
       <div class="movie-info">
         <h1>
           {{ selectedMovie.title }}
-          <div class="movie-rating">{{ selectedMovie.voteAverage }}</div>
+          <div class="movie-rating">{{ selectedMovie.imdbRating }}</div>
         </h1>
         <p class="movie-promo">{{ selectedMovie.tagline }}</p>
         <div class="additional">
           <p>
-            <span class="highlighted">{{ year }}</span>year
+            <span class="highlighted">{{ selectedMovie.year }}</span>year
           </p>
           <p>
             <span class="highlighted">{{ duration }}</span>min
           </p>
         </div>
-        <p class="description">{{ selectedMovie.overview }}</p>
+        <p class="description">{{ selectedMovie.storyline }}</p>
       </div>
     </article>
   </div>
@@ -34,8 +34,7 @@ import { useStore } from 'vuex';
 
 const { getters } = useStore();
 const selectedMovie = computed(() => getters.getSelectedMovie);
-const year = computed(() => new Date(selectedMovie.value.releaseDate).getFullYear());
-const duration = computed(() => selectedMovie.value.duration);
+const duration = computed(() => selectedMovie.value.duration.slice(2, -1));
 </script>
 
 <style scoped lang="scss">

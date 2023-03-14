@@ -5,7 +5,7 @@
     <footer>
       <div class="row">
         <p class="movie-name">{{movie.title}}</p>
-        <p class="movie-year">{{year}}</p>
+        <p class="movie-year">{{movie.year}}</p>
       </div>
       <div class="row">
         <p class="movie-genre">{{genres}}</p>
@@ -19,7 +19,6 @@ import { vShowIfInViewport } from '@/components/directives';
 import { computed } from 'vue';
 
 const props = defineProps(['movie']);
-const year = computed(() => new Date(props.movie.releaseDate).getFullYear());
 const genres = computed(() => props.movie.genres.join(', '));
 
 function showPoster(entries: IntersectionObserverEntry[]): void {
@@ -27,7 +26,7 @@ function showPoster(entries: IntersectionObserverEntry[]): void {
     const { target, isIntersecting } = entry;
 
     if (isIntersecting) {
-      (target as HTMLElement).style.backgroundImage = `url(${props.movie.posterPath})`;
+      (target as HTMLElement).style.backgroundImage = `url(${props.movie.posterurl})`;
       (target as HTMLElement).style.backgroundSize = 'cover';
     }
   });
@@ -60,6 +59,9 @@ function showPoster(entries: IntersectionObserverEntry[]): void {
 
       .movie-name {
         font-size: 18px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space:nowrap;
       }
 
       .movie-year {

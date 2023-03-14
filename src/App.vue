@@ -23,14 +23,11 @@ import DetailsPage from '@/components/pages/DetailsPage.vue';
 import SearchResults from '@/components/results/SearchResults.vue';
 import CompanyLogo from '@/components/shared/CompanyLogo.vue';
 import { computed, ref, Ref } from 'vue';
-import { IMovie } from '@/models/models';
-import allMovies from '@/models/movies';
 import { useStore } from 'vuex';
 import actionTypes from '@/store/action-types';
 
 const { getters, dispatch } = useStore();
 const appRef = ref(null);
-const selectedMovie: Ref<IMovie> = computed(() => getters.getSelectedMovie);
 const showDetailsPage: Ref<boolean> = computed(() => {
   console.log(getters.getSelectedMovie);
   if (getters.getSelectedMovie) {
