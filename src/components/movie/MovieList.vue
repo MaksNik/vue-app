@@ -9,11 +9,16 @@
 <script setup lang="ts">
 import MovieCard from '@/components/movie/MovieCard.vue';
 import { useStore } from 'vuex';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import actionTypes from '@/store/action-types';
 
 const { getters, dispatch } = useStore();
 const movieList = computed(() => getters.getMoviesList);
+
+onMounted(() => {
+  dispatch(actionTypes.searchMovies, '');
+});
+
 </script>
 
 <style scoped lang="scss">
@@ -25,6 +30,7 @@ const movieList = computed(() => getters.getMoviesList);
 
     .movie-item {
       margin-bottom: 20px;
+      max-width: 324px;
 
       &:not(:nth-child(3n)) {
         margin-right: 60px;

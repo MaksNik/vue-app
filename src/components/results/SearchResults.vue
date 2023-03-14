@@ -9,7 +9,14 @@
   </header>
   <main class="results-container">
     <div class="wrapper">
-      <MovieList/>
+      <Suspense>
+        <template #default>
+          <MovieList/>
+        </template>
+        <template #fallback>
+          <p class="loading">Loading...</p>
+        </template>
+      </Suspense>
     </div>
   </main>
 </template>
@@ -53,5 +60,14 @@ const moviesList = computed(() => getters.getMoviesList);
     background-color: #232323;
     color: white;
     height: 100%;
+
+    .wrapper {
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading {
+      font-size: 44px;
+    }
   }
 </style>

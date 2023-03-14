@@ -5,22 +5,29 @@ import {
 } from '@/models/models';
 import mutationTypes from '@/store/mutation-types';
 import actionTypes from '@/store/action-types';
-import movies from '@/models/movies';
+import Api from '@/modules/api';
 
-function searchMoviesByMode(payload: string, mode: SearchMode): IMovie[] {
-  return movies.filter((movie: IMovie) => {
-    const searchValue = payload.toLowerCase();
+function searchMoviesByMode(searchValue: string, mode: SearchMode): Promise<IMovie[]> {
+  return Api.getAllMovies()
+    .then((movies) => {
+      if (!searchValue) {
+        return movies;
+      }
 
-    if (mode === SearchMode.Genre) {
-      return !!movie.genres.find((genre: string) => genre.toLowerCase().includes(searchValue));
-    }
+      return movies.filter((movie: IMovie) => {
+        const value = searchValue.toLowerCase();
 
-    return movie.title.toLowerCase().includes(searchValue);
-  });
+        if (mode === SearchMode.Genre) {
+          return !!movie.genres.find((genre: string) => genre.toLowerCase().includes(value));
+        }
+
+        return movie.title.toLowerCase().includes(value);
+      });
+    });
 }
 
 const initialState: IState = {
-  moviesList: movies,
+  moviesList: [],
   searchValue: '',
   selectedMovie: null,
   searchMode: SearchMode.Title,
@@ -64,19 +71,18 @@ export default createStore({
     },
     [mutationTypes.sortMoviesList](state) {
       const compareFn = state.sortMode === SortMode.Rating
-        ? ((a: any, b: any) => b.voteAverage - a.voteAverage)
-        : (a: any, b: any) => new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime();
+        ? ((a: any, b: any) => b.imdbRating - a.imdbRating)
+        : (a: any, b: any) => a.year - b.year;
 
       state.moviesList = [...state.moviesList].sort(compareFn);
     },
   },
   actions: {
-    [actionTypes.searchMovies]({ state, dispatch, commit }, value: string) {
-      if (value) {
-        commit(mutationTypes.setSearchValue, { value });
-        commit(mutationTypes.setMoviesList, { list: searchMoviesByMode(value, state.searchMode) });
-        commit(mutationTypes.sortMoviesList);
-      }
+    async [actionTypes.searchMovies]({ state, dispatch, commit }, value: string) {
+      commit(mutationTypes.setSearchValue, { value });
+      const results = await searchMoviesByMode(value, state.searchMode);
+      commit(mutationTypes.setMoviesList, { list: results });
+      commit(mutationTypes.sortMoviesList);
     },
     [actionTypes.setSearchMode]({ state, dispatch, commit }, mode: SearchMode) {
       if (state.searchMode !== mode) {
