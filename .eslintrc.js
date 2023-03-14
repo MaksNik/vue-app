@@ -22,6 +22,8 @@ module.exports = {
         allowChildren: false,
       },
     ],
+    'no-shadow': 'off',
+    '@typescript-eslint/no-shadow': 'warn',
   },
   overrides: [{
     files: ['**/__tests__/*.{j,t}s?(x)', '**/tests/unit/**/*.spec.{j,t}s?(x)'],

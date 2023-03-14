@@ -16,17 +16,16 @@
 
 <script setup lang="ts">
 import SharedButton from '@/components/shared/SharedButton.vue';
-import { Ref, ref } from 'vue';
-import { SortMode } from '@/components/models/models';
+import { computed, Ref, ref } from 'vue';
+import { SortMode } from '@/models/models';
+import actionTypes from '@/store/action-types';
+import { useStore } from 'vuex';
 
-const emit = defineEmits(['setSortMode']);
-const activeButton: Ref<SortMode> = ref(SortMode.ReleaseDate);
+const { dispatch, getters } = useStore();
+const activeButton = computed(() => getters.getSortMode);
 
 function setSortMode(e: MouseEvent): void {
-  if (activeButton.value !== (e.target as HTMLElement)?.innerText.toLowerCase()) {
-    activeButton.value = (e.target as HTMLElement)?.innerText.toLowerCase() as SortMode;
-    emit('setSortMode', activeButton.value);
-  }
+  dispatch(actionTypes.setSortMode, (e.target as HTMLElement)?.innerText.toLowerCase());
 }
 </script>
 
