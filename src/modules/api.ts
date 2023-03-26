@@ -1,8 +1,7 @@
-import { IMovie } from '@/models/models';
 import request from '@/modules/index';
 
 export default class Api {
-  static getAllMovies() {
+  static getMovies() {
     return request('/movies', { method: 'get' });
   }
 }

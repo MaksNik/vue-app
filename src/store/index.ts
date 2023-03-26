@@ -7,23 +7,20 @@ import mutationTypes from '@/store/mutation-types';
 import actionTypes from '@/store/action-types';
 import Api from '@/modules/api';
 
-function searchMoviesByMode(searchValue: string, mode: SearchMode): Promise<IMovie[]> {
-  return Api.getAllMovies()
-    .then((movies) => {
-      if (!searchValue) {
-        return movies;
-      }
+function getAllMovies(): Promise<IMovie[]> {
+  return Api.getMovies();
+}
 
-      return movies.filter((movie: IMovie) => {
-        const value = searchValue.toLowerCase();
+function searchMoviesByMode(movies: IMovie[], searchValue: string, mode: SearchMode): IMovie[] {
+  return movies.filter((movie: IMovie) => {
+    const value = searchValue.toLowerCase();
 
-        if (mode === SearchMode.Genre) {
-          return !!movie.genres.find((genre: string) => genre.toLowerCase().includes(value));
-        }
+    if (mode === SearchMode.Genre) {
+      return !!movie.genres.find((genre: string) => genre.toLowerCase().includes(value));
+    }
 
-        return movie.title.toLowerCase().includes(value);
-      });
-    });
+    return movie.title.toLowerCase().includes(value);
+  });
 }
 
 const initialState: IState = {
@@ -66,9 +63,6 @@ export default createStore({
     [mutationTypes.setSortMode](state, payload) {
       state.sortMode = payload.mode;
     },
-    [mutationTypes.setSelectedMovie](state, payload) {
-      state.selectedMovie = payload.movie;
-    },
     [mutationTypes.sortMoviesList](state) {
       const compareFn = state.sortMode === SortMode.Rating
         ? ((a: any, b: any) => b.imdbRating - a.imdbRating)
@@ -78,9 +72,15 @@ export default createStore({
     },
   },
   actions: {
+    async [actionTypes.getAllMovies]({ commit }) {
+      const results = await getAllMovies();
+      commit(mutationTypes.setMoviesList, { list: results });
+      commit(mutationTypes.sortMoviesList);
+    },
     async [actionTypes.searchMovies]({ state, dispatch, commit }, value: string) {
       commit(mutationTypes.setSearchValue, { value });
-      const results = await searchMoviesByMode(value, state.searchMode);
+      await dispatch(actionTypes.getAllMovies);
+      const results = searchMoviesByMode(state.moviesList, value, state.searchMode);
       commit(mutationTypes.setMoviesList, { list: results });
       commit(mutationTypes.sortMoviesList);
     },
@@ -98,15 +98,6 @@ export default createStore({
         commit(mutationTypes.setSortMode, { mode });
         commit(mutationTypes.sortMoviesList);
       }
-    },
-    [actionTypes.selectMovie]({ state, commit }, id: number) {
-      if (!state.selectedMovie || state.selectedMovie?.id !== id) {
-        const selectedMovie = [...state.moviesList].find((movie) => movie.id === id);
-        commit(mutationTypes.setSelectedMovie, { movie: selectedMovie });
-      }
-    },
-    [actionTypes.unselectMovie]({ commit }) {
-      commit(mutationTypes.setSelectedMovie, { movie: null });
     },
   },
   modules: {

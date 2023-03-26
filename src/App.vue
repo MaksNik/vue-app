@@ -1,12 +1,8 @@
 <template>
-  <div class="movies-app" ref="appRef">
+  <div class="movies-app">
     <header>
       <CompanyLogo />
-      <HomePage v-if="!showDetailsPage" />
-      <DetailsPage
-        v-if="showDetailsPage"
-        @go-home-page="unselectMovie"
-      />
+      <router-view></router-view>
     </header>
     <main>
       <SearchResults />
@@ -18,28 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import HomePage from '@/components/pages/HomePage.vue';
-import DetailsPage from '@/components/pages/DetailsPage.vue';
 import SearchResults from '@/components/results/SearchResults.vue';
 import CompanyLogo from '@/components/shared/CompanyLogo.vue';
-import { computed, ref, Ref } from 'vue';
-import { useStore } from 'vuex';
-import actionTypes from '@/store/action-types';
-
-const { getters, dispatch } = useStore();
-const appRef = ref(null);
-const showDetailsPage: Ref<boolean> = computed(() => {
-  console.log(getters.getSelectedMovie);
-  if (getters.getSelectedMovie) {
-    appRef?.value.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  return !!getters.getSelectedMovie;
-});
-
-function unselectMovie(): void {
-  dispatch(actionTypes.unselectMovie);
-}
 
 </script>
 
