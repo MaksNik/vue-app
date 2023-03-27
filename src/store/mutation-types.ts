@@ -4,7 +4,6 @@ const enum mutationTypes {
   setSearchValue = 'SET_SEARCH_VALUE',
   setSearchMode = 'SET_SEARCH_MODE',
   setSortMode = 'SET_SORT_MODE',
-  setSelectedMovie = 'SET_SELECTED_MOVIE_ID',
   sortMoviesList = 'SORT_MOVIES_LIST',
 }
 

@@ -1,27 +1,29 @@
 <template>
   <div class="wrapper">
-    <SharedButton class="back-btn" @click="$emit('goHomePage')" label="back" :is-active="true"/>
+    <router-link to="/">
+      <SharedButton class="back-btn" label="back" :is-active="true"/>
+    </router-link>
     <article class="movie-details">
       <div class="movie-poster"
            :style="{
-          'background-image': `url(${selectedMovie.posterPath})`,
+          'background-image': `url(${movie?.posterurl})`,
           'background-size': 'cover'
     }"></div>
       <div class="movie-info">
         <h1>
-          {{ selectedMovie.title }}
-          <div class="movie-rating">{{ selectedMovie.voteAverage }}</div>
+          {{ movie?.title }}
+          <div class="movie-rating">{{ movie?.imdbRating }}</div>
         </h1>
-        <p class="movie-promo">{{ selectedMovie.tagline }}</p>
+        <p class="movie-promo">{{ movie?.tagline }}</p>
         <div class="additional">
           <p>
-            <span class="highlighted">{{ year }}</span>year
+            <span class="highlighted">{{ movie?.year }}</span>year
           </p>
           <p>
             <span class="highlighted">{{ duration }}</span>min
           </p>
         </div>
-        <p class="description">{{ selectedMovie.overview }}</p>
+        <p class="description">{{ movie?.storyline }}</p>
       </div>
     </article>
   </div>
@@ -29,13 +31,31 @@
 
 <script setup lang="ts">
 import SharedButton from '@/components/shared/SharedButton.vue';
-import { computed } from 'vue';
+import {
+  computed, onMounted, Ref, ref, watch,
+} from 'vue';
 import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import { IMovie } from '@/models/models';
 
 const { getters } = useStore();
-const selectedMovie = computed(() => getters.getSelectedMovie);
-const year = computed(() => new Date(selectedMovie.value.releaseDate).getFullYear());
-const duration = computed(() => selectedMovie.value.duration);
+const movie: Ref<IMovie | undefined> = ref();
+const duration = computed(() => movie.value?.duration?.slice(2, -1));
+const route = useRoute();
+
+function setMovie(id: string | string[]) {
+  movie.value = getters.getMoviesList.find((movie: IMovie) => movie.id.toString() === id);
+  document.body.scrollIntoView({ behavior: 'smooth' });
+}
+
+onMounted(() => {
+  setMovie(route.params.id);
+});
+
+watch(() => route.params.id, (newId) => {
+  setMovie(newId);
+});
+
 </script>
 
 <style scoped lang="scss">
@@ -56,6 +76,7 @@ const duration = computed(() => selectedMovie.value.duration);
         height: 455px;
         margin: 0 40px 40px 0;
         flex: 1 0 auto;
+        background-color: #F65261;
       }
 
       .movie-info {

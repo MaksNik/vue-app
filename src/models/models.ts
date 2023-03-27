@@ -1,16 +1,18 @@
 export interface IMovie {
   id: number;
-  title: string;
-  tagline: string;
-  voteAverage: number;
-  voteCount: number;
-  releaseDate: string;
-  posterPath: string;
-  overview: string;
-  budget: number;
-  revenue: number;
+  actors: string[];
+  averageRating: number;
+  contentRating: string;
+  duration: string;
   genres: string[];
-  duration: number;
+  imdbRating: number;
+  poster: string;
+  posterurl: string;
+  ratings: number[];
+  releaseDate: string;
+  storyline: string;
+  title: string;
+  year: string;
 }
 
 // eslint-disable-next-line no-shadow

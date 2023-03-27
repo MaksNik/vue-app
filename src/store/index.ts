@@ -5,22 +5,26 @@ import {
 } from '@/models/models';
 import mutationTypes from '@/store/mutation-types';
 import actionTypes from '@/store/action-types';
-import movies from '@/models/movies';
+import Api from '@/modules/api';
 
-function searchMoviesByMode(payload: string, mode: SearchMode): IMovie[] {
+function getAllMovies(): Promise<IMovie[]> {
+  return Api.getMovies();
+}
+
+function searchMoviesByMode(movies: IMovie[], searchValue: string, mode: SearchMode): IMovie[] {
   return movies.filter((movie: IMovie) => {
-    const searchValue = payload.toLowerCase();
+    const value = searchValue.toLowerCase();
 
     if (mode === SearchMode.Genre) {
-      return !!movie.genres.find((genre: string) => genre.toLowerCase().includes(searchValue));
+      return !!movie.genres.find((genre: string) => genre.toLowerCase().includes(value));
     }
 
-    return movie.title.toLowerCase().includes(searchValue);
+    return movie.title.toLowerCase().includes(value);
   });
 }
 
 const initialState: IState = {
-  moviesList: movies,
+  moviesList: [],
   searchValue: '',
   selectedMovie: null,
   searchMode: SearchMode.Title,
@@ -59,24 +63,26 @@ export default createStore({
     [mutationTypes.setSortMode](state, payload) {
       state.sortMode = payload.mode;
     },
-    [mutationTypes.setSelectedMovie](state, payload) {
-      state.selectedMovie = payload.movie;
-    },
     [mutationTypes.sortMoviesList](state) {
       const compareFn = state.sortMode === SortMode.Rating
-        ? ((a: any, b: any) => b.voteAverage - a.voteAverage)
-        : (a: any, b: any) => new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime();
+        ? ((a: any, b: any) => b.imdbRating - a.imdbRating)
+        : (a: any, b: any) => a.year - b.year;
 
       state.moviesList = [...state.moviesList].sort(compareFn);
     },
   },
   actions: {
-    [actionTypes.searchMovies]({ state, dispatch, commit }, value: string) {
-      if (value) {
-        commit(mutationTypes.setSearchValue, { value });
-        commit(mutationTypes.setMoviesList, { list: searchMoviesByMode(value, state.searchMode) });
-        commit(mutationTypes.sortMoviesList);
-      }
+    async [actionTypes.getAllMovies]({ commit }) {
+      const results = await getAllMovies();
+      commit(mutationTypes.setMoviesList, { list: results });
+      commit(mutationTypes.sortMoviesList);
+    },
+    async [actionTypes.searchMovies]({ state, dispatch, commit }, value: string) {
+      commit(mutationTypes.setSearchValue, { value });
+      await dispatch(actionTypes.getAllMovies);
+      const results = searchMoviesByMode(state.moviesList, value, state.searchMode);
+      commit(mutationTypes.setMoviesList, { list: results });
+      commit(mutationTypes.sortMoviesList);
     },
     [actionTypes.setSearchMode]({ state, dispatch, commit }, mode: SearchMode) {
       if (state.searchMode !== mode) {
@@ -92,15 +98,6 @@ export default createStore({
         commit(mutationTypes.setSortMode, { mode });
         commit(mutationTypes.sortMoviesList);
       }
-    },
-    [actionTypes.selectMovie]({ state, commit }, id: number) {
-      if (!state.selectedMovie || state.selectedMovie?.id !== id) {
-        const selectedMovie = [...state.moviesList].find((movie) => movie.id === id);
-        commit(mutationTypes.setSelectedMovie, { movie: selectedMovie });
-      }
-    },
-    [actionTypes.unselectMovie]({ commit }) {
-      commit(mutationTypes.setSelectedMovie, { movie: null });
     },
   },
   modules: {
